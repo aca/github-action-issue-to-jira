@@ -123,13 +123,13 @@ async function addJiraTicket(jira, tools) {
   const body = `${payload.issue.body}\n\nRaised by: ${payload.issue.user.html_url}\n\n${payload.issue.html_url}`;
 
   const project = core.getInput("project", { required: true });
-  const assignee = core.getInput("assignee", { required: false });
+  const assigneeId = core.getInput("assigneeId", { required: true });
 
   tools.log.pending("Creating Jira ticket with the following parameters");
   tools.log.info(`Title: ${title}`);
   tools.log.info(`Body: ${body}`);
   tools.log.info(`Project: ${project}`);
-  tools.log.info(`Assignee: ${assignee}`);
+  tools.log.info(`AssigneeId: ${assigneeId}`);
 
   let request = {
     fields: {
@@ -144,16 +144,9 @@ async function addJiraTicket(jira, tools) {
     },
   };
 
-  if (assignee && assignee.length > 0) {
-    request = {
-      ...request,
-      assignee: {
-        name: assignee,
-      },
-    };
-  }
-
   const result = await jira.addNewIssue(request);
+  const assignResult = await jira.updateAssigneeWithId(result.key, assigneeId)
+
   tools.log.complete("Created Jira ticket");
 
   const jiraIssue = result.key;

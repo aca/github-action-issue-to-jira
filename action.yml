@@ -19,8 +19,9 @@ inputs:
   project:
     description: "The project key to create a new issue in"
     required: true
-  assignee:
-    description: "The default assignee for any created issues"
+  assigneeId:
+    description: "The assigneeId for created issues"
+    required: true
 runs:
   using: 'node16'
   main: 'dist/index.js'
